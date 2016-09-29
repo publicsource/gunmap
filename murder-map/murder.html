@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Pittsburgh Murder Map</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.5/leaflet.css" />
+        <link rel="stylesheet" href="master.css" />
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.8.1/bootstrap-table.min.css">
+
+        <link rel="pgh-murders" type="application/geojson" href="./geojson/20160113_1027-pgh-murders.geojson">
+        
+        <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+        <script src="http://cdn.leafletjs.com/leaflet-0.7.5/leaflet.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.8.1/bootstrap-table.min.js"></script>
+        
+        <!-- Latest compiled and minified Locales -->
+        <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.8.1/locale/bootstrap-table-zh-CN.min.js"></script>
+
+    </head>
+    
+    <body>
+        <div class="map-top container">
+	        <h1>Pittsburgh's solved and unsolved murders</h1>
+	        <p class="lead">PublicSource plotted every murder in the city of Pittsburgh from 2010 through 2015. Using arrest data recently made available by the Bureau of Police, we have illustrated the gulf in murders and arrests. Using disposition data from the Allegheny County District Court, we have tracked each case to verdict and illustrated when those prosecutions fail.</p>
+			<div class="row">
+				<div class="col-sm-4">
+					<img class="img-responsive" src="http://54.173.122.255/murder-map/murder-map-key-horizontal.jpg" alt="map key" />
+				</div>
+			</div>
+            <div class="row" id="map"></div>
+            
+            <div class="row">
+                <p><em>Source: A PublicSource analysis of data from the Pittsburgh Bureau of Police and Allegheny County District Court.<br>Map by Alexandra Kanik</em></p>
+            </div>
+        </div>
+        <script>
+	        var pymChild;
+            $(document).ready(function(){
+                
+                //var map = L.map('map').setView([37.513572, -85.087087], 7);
+                var map = L.map('map', {scrollWheelZoom:false}).setView([40.4472386, -79.9814464], 12);
+                $('#data-table').append('<tr><td>Click a county above to see jail death data</td><td></tr>');
+                
+                L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+                    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a target="_blank" href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery � <a href="http://mapbox.com">Mapbox</a>',
+                    maxZoom: 18,
+                    id: 'akanik.nck27c9l',
+                    accessToken: 'pk.eyJ1IjoiYWthbmlrIiwiYSI6IjQ2M2Y5OGI2Y2MzMGI2MmRmMGU4NjNhNDg3Mjc3ZjkwIn0.a1NvEywRiZazvyvrYCQSoA'
+                }).addTo(map);
+                
+                var geojsonMarkerSolved = {
+				    radius: 8,
+				    fillColor: "#666666",
+				    color: "#000",
+				    weight: 1,
+				    opacity: 1,
+				    fillOpacity: 0.8
+				};
+				var geojsonMarkerUnsolved = {
+				    radius: 8,
+				    fillColor: "#E82C0C",
+				    color: "#000",
+				    weight: 1,
+				    opacity: 1,
+				    fillOpacity: 0.8
+				};
+                $.getJSON($('link[rel="pgh-murders"]').attr("href"), function(data) {
+                    var murders = L.geoJson(data, {
+                        onEachFeature: function (feature, layer) {
+	                        var arrest = feature.properties.arrest_made;
+	                        var conviction = feature.properties.conviction;
+	                        
+                            layer.bindPopup("<strong>Victim:</strong> " + feature.properties.o_Victim + "<br><strong>Date:</strong> " + feature.properties.Date + "<br><strong>Arrest made?</strong><br>" + arrest + "<br><strong>Conviction?</strong><br>" + conviction);
+                        },
+                        pointToLayer: function (feature, latlng) {
+	                        color = feature.properties.map_color;
+	                        if(color == "YES"){
+		                        return L.circleMarker(latlng, geojsonMarkerSolved);
+	                        }else{
+		                        return L.circleMarker(latlng, geojsonMarkerUnsolved);
+	                        }
+					    }
+                    });
+                    murders.addTo(map);
+                });
+            });
+        </script>
+        <script src="./pym.min.js"></script>
+        <script type="text/javascript">
+            (function() {
+            	var $ = jQuery,
+            	pymChild = new pym.Child({polling:500});
+            	$(document).ready(function(){
+            	       $(window).load(function(){
+            	       });
+            	});
+            })();
+        </script>
+   </body>
+</html>
