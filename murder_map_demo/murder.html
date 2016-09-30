@@ -14,6 +14,12 @@
         
         <!-- Here's the data file. This is what you're gonna wanna replace when you get the new data ready.-->
         <link rel="pgh-murders" type="application/geojson" href="./geojson/20160113_1027-pgh-murders.geojson">
+        
+        <!-- Here's that same data, but we're brining it in as a js file. If you look in this file, you'll see we're
+          attaching the data to a variable pgh_murders. Since we're referencing our js file below, this murder.html file
+          can now use that pgh_murders variable.
+        -->
+        <script src="./geojson/20160113_1027-pgh-murders.js"></script>
     </head>
     
     <body>
@@ -42,7 +48,7 @@
         var pymChild;
         
         $(document).ready(function(){
-            
+          
           var map = L.map('map', {scrollWheelZoom:false}).setView([40.4472386, -79.9814464], 12);
           
           $('#data-table').append('<tr><td>Click a county above to see jail death data</td><td></tr>');
@@ -54,6 +60,8 @@
               accessToken: 'pk.eyJ1IjoiYWthbmlrIiwiYSI6IjQ2M2Y5OGI2Y2MzMGI2MmRmMGU4NjNhNDg3Mjc3ZjkwIn0.a1NvEywRiZazvyvrYCQSoA'
           }).addTo(map);
           
+          // Looks like we've already solved issue #12, color-coding markers
+          // We're creating marker styles for solved murders ...
           var geojsonMarkerSolved = {
     		    radius: 8,
     		    fillColor: "#666666",
@@ -63,6 +71,9 @@
     		    fillOpacity: 0.8
     			};
     			
+    			// ... and unsolved murders.
+    			// We can create a variable for each marker type. The logic is contained in
+    			// murders.pointToLayer (lines 107-115ish)
     			var geojsonMarkerUnsolved = {
     			    radius: 8,
     			    fillColor: "#E82C0C",
@@ -72,16 +83,29 @@
     			    fillOpacity: 0.8
     			};
     			
+    			/* That link[rel="pgh-murders"] variable is our geojson murders data referenced above via:
+          <link rel="pgh-murders" type="application/geojson" href="./geojson/20160113_1027-pgh-murders.geojson">
+          NOTE: if you're trying to run this locally, you're going to get error messages about Cross Origin Requests
+          this is normal. Checkout the JS COMMENTS below to see a different way of doing it.*/
+          
           $.getJSON($('link[rel="pgh-murders"]').attr("href"), function(data) {
             var murders = L.geoJson(data, {
               onEachFeature: function (feature, layer) {
-                var arrest = feature.properties.arrest_made;
-                var conviction = feature.properties.conviction;
+                
+                /* You'll need to either make sure the column names are the same between the old data and the new,
+                or you'll need to change these variables to correspond: feature.properties.['column_name']*/
+                
+                var arrest = feature.properties['arrest_made'];
+                var conviction = feature.properties['conviction'];
+                var victim = feature.properties['o_Victim'];
+                var date = feature.properties['Date'];
                     
-                layer.bindPopup("<strong>Victim:</strong> " + feature.properties.o_Victim + "<br><strong>Date:</strong> " + feature.properties.Date + "<br><strong>Arrest made?</strong><br>" + arrest + "<br><strong>Conviction?</strong><br>" + conviction);
+                layer.bindPopup("<strong>Victim:</strong> " + victim + "<br><strong>Date:</strong> " + date + "<br><strong>Arrest made?</strong><br>" + arrest + "<br><strong>Conviction?</strong><br>" + conviction);
               },
+              
+              // Here's where we employ our marker color logic
               pointToLayer: function (feature, latlng) {
-                var color = feature.properties.map_color;
+                var color = feature.properties['map_color'];
                 if(color == "YES"){
                   return L.circleMarker(latlng, geojsonMarkerSolved);
                 }else{
@@ -89,15 +113,39 @@
                 }
 		          }
             });
-            
+        
             murders.addTo(map);
-            
           });
+          
+          /* JS COMMENTS: Comment out lines 91 - 118 above and uncomment the code block below to see how we can just as easily
+            use our js data file.
+            
+            var murders = L.geoJson(pgh_murders, {
+            onEachFeature: function (feature, layer) {
+              var arrest = feature.properties['arrest_made'];
+              var conviction = feature.properties['conviction'];
+                  
+              layer.bindPopup("<strong>Victim:</strong> " + feature.properties.o_Victim + "<br><strong>Date:</strong> " + feature.properties.Date + "<br><strong>Arrest made?</strong><br>" + arrest + "<br><strong>Conviction?</strong><br>" + conviction);
+            },
+            pointToLayer: function (feature, latlng) {
+              var color = feature.properties.map_color;
+              if(color == "YES"){
+                return L.circleMarker(latlng, geojsonMarkerSolved);
+              }else{
+                return L.circleMarker(latlng, geojsonMarkerUnsolved);
+              }
+	          }
+          });
+          
+          murders.addTo(map);*/       
+          
+          
         });
       </script>
       
       <script src="./pym.min.js"></script>
       
+      <!-- I hate pym.js, but here's that code. I don't actually hate it... it hates me though.-->
       <script type="text/javascript">
         (function() {
         	var $ = jQuery,
