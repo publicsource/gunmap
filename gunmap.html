@@ -180,6 +180,7 @@
                     var userLatLng = L.latLng(userLat,userLon);
                   
                     var userMarker = L.marker(userAddress).addTo(map);
+                    map.setView(userLatLng, 14);
                     
                     var nearest = leafletKnn(murders).nearest(L.latLng(userLat, userLon), 1);
                     var nearestLayer = nearest[0]['layer'];
