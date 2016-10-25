@@ -13,13 +13,13 @@
         <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.8.1/bootstrap-table.min.js"></script>
         
         <!-- Here's the data file. This is what you're gonna wanna replace when you get the new data ready.-->
-        <link rel="pgh-murders" type="application/geojson" href="./geojson/20160113_1027-pgh-murders.geojson">
+        <link rel="pgh-murders" type="application/geojson" href="./geojson/20161025_complete_gunmapdata.geojson">
         
         <!-- Here's that same data, but we're brining it in as a js file. If you look in this file, you'll see we're
           attaching the data to a variable pgh_murders. Since we're referencing our js file below, this murder.html file
           can now use that pgh_murders variable.
         -->
-        <script src="./geojson/20160113_1027-pgh-murders.js"></script>
+        <script src="./geojson/20161025_complete_gunmapdata.js"></script>
     </head>
     
     <body>
@@ -87,7 +87,8 @@
           <link rel="pgh-murders" type="application/geojson" href="./geojson/20160113_1027-pgh-murders.geojson">
           NOTE: if you're trying to run this locally, you're going to get error messages about Cross Origin Requests
           this is normal. Checkout the JS COMMENTS below to see a different way of doing it.*/
-          
+
+
           $.getJSON($('link[rel="pgh-murders"]').attr("href"), function(data) {
             var murders = L.geoJson(data, {
               onEachFeature: function (feature, layer) {
