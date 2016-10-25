@@ -4,13 +4,13 @@
         <title>Pittsburgh Gun Map</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
         <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.5/leaflet.css" />
-        <link rel="stylesheet" href="master.css" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.8.1/bootstrap-table.min.css">
+        <link rel="stylesheet" href="css/master.css" />
         
         <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
         <script src="http://cdn.leafletjs.com/leaflet-0.7.5/leaflet.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.8.1/bootstrap-table.min.js"></script>
+        <script src="js/parse-address.min.js"></script>
+        <script src="js/leaflet-knn.min.js"></script>
         
         <!-- Here's the data file. This is what you're gonna wanna replace when you get the new data ready.-->
         <link rel="pgh-murders" type="application/geojson" href="./geojson/20161019_complete_gunmapdata.geojson">
@@ -35,7 +35,10 @@
   					<img class="img-responsive" src="http://54.173.122.255/murder-map/murder-map-key-horizontal.jpg" alt="map key" />
   				</div>
   			</div>
-        
+        <div id="address-input">
+          <input type="text" placeholder='Type your address' id='addressInput'><br>
+          <input id="addressSubmit" type="submit" value="Submit">
+        </div>
         <div class="row" id="map"></div>
         
         <div class="row">
@@ -160,13 +163,87 @@
               }
           });
           
-          murders.addTo(map);       
+          murders.addTo(map);
           
+          function getAddress(addressString){
           
+            function findNearest(geocodeURL){
+              $.ajax({
+                type : "Get",
+                url :geocodeURL,
+                dataType :"jsonp",
+                jsonpCallback: "myCallback",
+                success : function(data){
+                    var userAddress = data['resourceSets'][0]['resources'][0]['point']['coordinates'];
+                    var userLat = userAddress[0];
+                    var userLon = userAddress[1];
+                    var userLatLng = L.latLng(userLat,userLon);
+                  
+                    var userMarker = L.marker(userAddress).addTo(map);
+                    map.setView(userLatLng, 14);
+                    
+                    var nearest = leafletKnn(murders).nearest(L.latLng(userLat, userLon), 1);
+                    var nearestLayer = nearest[0]['layer'];
+                    
+                    var nearestLayerLatLng = nearestLayer.getLatLng();
+                    var nearestLayerType = nearestLayer.feature.properties.TYPE;
+                    var nearestLayerAddress = nearestLayer.feature.properties.LOCATION;
+                                  
+                    var distanceBetween = nearestLayerLatLng.distanceTo(userLatLng);
+                    var distanceInMiles = distanceBetween / 1609.34;
+                    
+                    var popupContent = '<p><strong>' + nearestLayerAddress + '</strong> is address of the nearest incident to <strong>' + addressString + '</strong>. This incident was a <strong>' + nearestLayerType + '</strong> and was <strong>' + distanceInMiles.toFixed(2) + ' miles away.</p>';
+    
+                    nearestLayer.bindPopup(popupContent).openPopup();
+                    
+                },
+                error : function(httpReq,status,exception){
+                    alert(status+" "+exception);
+                }
+              });
+            }
+            
+            var parsedAddress = parseAddress.parseLocation(addressString);
+            var address = '';
+            var city = '';
+            var state = '';
+            var zip = '';
+            var geocodeURL = '';
+            
+            if(parsedAddress['number'] && parsedAddress['prefix'] && parsedAddress['street'] && parsedAddress['type']){
+              address = parsedAddress['number'] + ' ' + parsedAddress['prefix'] + ' ' + parsedAddress['street'] + ' ' + parsedAddress['type']; 
+            }else if(parsedAddress['number'] && parsedAddress['street'] && parsedAddress['type']){
+              address = parsedAddress['number'] + ' ' + parsedAddress['street'] + ' ' + parsedAddress['type']; 
+            }else if(parsedAddress['number'] && parsedAddress['street']){
+              address = parsedAddress['number'] + ' ' + parsedAddress['street'];
+            }else{
+              alert('Please enter at least a street number and street name');
+              return;
+            }
+            
+            if(parsedAddress['city'] && parsedAddress['state'] && parsedAddress['zip']){
+              city = parsedAddress['city'];
+              state = parsedAddress['state'];
+              zip = parsedAddress['zip'];
+              geocodeURL = 'http://dev.virtualearth.net/REST/v1/Locations/US/' + state + '/' + zip + '/' + city + '/' + encodeURIComponent(address) + '?o=json&jsonp=myCallback&key=AmEa01YgR2J-e2GRn_kc8-pTjfTgTtJcxQmMrF1ZRDLFx7KfCKrwECa54zvrHuEm';
+              findNearest(geocodeURL);
+            }else{
+              alert('Please enter a city, state and zip');
+              return;
+            }
+          };
+          
+          $('#addressSubmit').on('click',function(){
+            if($('#addressInput').val()){
+              getAddress($('#addressInput').val());
+            }else{
+              alert('try again allie');
+            }
+          });  
         });
       </script>
       
-      <script src="./pym.min.js"></script>
+      <script src="./js/pym.min.js"></script>
       
       <!-- I hate pym.js, but here's that code. I don't actually hate it... it hates me though.-->
       <script type="text/javascript">
