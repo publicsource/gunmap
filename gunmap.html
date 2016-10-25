@@ -5,28 +5,29 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
         <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.5/leaflet.css" />
         <link rel="stylesheet" href="master.css" />
-        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.8.1/bootstrap-table.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.8.1/bootstrap-table.min.css">
         
         <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
         <script src="http://cdn.leafletjs.com/leaflet-0.7.5/leaflet.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.8.1/bootstrap-table.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.8.1/bootstrap-table.min.js"></script>
         
         <!-- Here's the data file. This is what you're gonna wanna replace when you get the new data ready.-->
-        <link rel="pgh-murders" type="application/geojson" href="./20161021_complete_gunmapdata.geojson">
+        <link rel="pgh-murders" type="application/geojson" href="./geojson/20161019_complete_gunmapdata.geojson">
         
         <!-- Here's that same data, but we're brining it in as a js file. If you look in this file, you'll see we're
           attaching the data to a variable pgh_murders. Since we're referencing our js file below, this murder.html file
           can now use that pgh_murders variable.
         -->
-        <script src="./20161021_complete_gunmapdata.js"></script>
+        <script src="./geojson/20161025_complete_gunmapdata.js"></script>
+        <!--<script src="./geojson/test.js"></script>-->
     </head>
     
     <body>
       
       <div class="map-top container">
         
-        <h1>Pittsburgh's solved and unsolved murders</h1>
+        <h1>Firearm incidents in Pittsburgh</h1>
         <p class="lead">PublicSource plotted every murder in the city of Pittsburgh from 2010 through 2015. Using arrest data recently made available by the Bureau of Police, we have illustrated the gulf in murders and arrests. Using disposition data from the Allegheny County District Court, we have tracked each case to verdict and illustrated when those prosecutions fail.</p>
         
   			<div class="row">
@@ -38,7 +39,7 @@
         <div class="row" id="map"></div>
         
         <div class="row">
-          <p><em>Source: A PublicSource analysis of data from the Pittsburgh Bureau of Police and Allegheny County District Court.<br>Map by Alexandra Kanik</em></p>
+          <p><em>Source: A PublicSource analysis of data from the Pittsburgh Bureau of Police.<br>Map by PublicSource's Natasha Khan and Ohio Valley Resource's Alexandra Kanik</em></p>
         </div>
         
       </div>
@@ -62,9 +63,9 @@
           
           // Looks like we've already solved issue #12, color-coding markers
           // We're creating marker styles for solved murders ...
-          var geojsonMarkerSolved = {
+          var geojsonMarkerHomicide = {
     		    radius: 8,
-    		    fillColor: "#666666",
+    		    fillColor: "#fd552b",
     		    color: "#000",
     		    weight: 1,
     		    opacity: 1,
@@ -74,70 +75,92 @@
     			// ... and unsolved murders.
     			// We can create a variable for each marker type. The logic is contained in
     			// murders.pointToLayer (lines 107-115ish)
-    			var geojsonMarkerUnsolved = {
+    			var geojsonMarkerNonfatal = {
     			    radius: 8,
-    			    fillColor: "#E82C0C",
+    			    fillColor: "#e4b33f",
     			    color: "#000",
     			    weight: 1,
     			    opacity: 1,
     			    fillOpacity: 0.8
     			};
+
+          var geojsonMarkerNoinjury = {
+              radius: 8,
+              fillColor: "#97b5bf",
+              color: "#000",
+              weight: 1,
+              opacity: 1,
+              fillOpacity: 0.8
+          };
     			
     			/* That link[rel="pgh-murders"] variable is our geojson murders data referenced above via:
           <link rel="pgh-murders" type="application/geojson" href="./geojson/20160113_1027-pgh-murders.geojson">
           NOTE: if you're trying to run this locally, you're going to get error messages about Cross Origin Requests
           this is normal. Checkout the JS COMMENTS below to see a different way of doing it.*/
           
-          $.getJSON($('link[rel="pgh-murders"]').attr("href"), function(data) {
+          /*$.getJSON($('link[rel="pgh-murders"]').attr("href"), function(data) {
             var murders = L.geoJson(data, {
               onEachFeature: function (feature, layer) {
                 
-                /* You'll need to either make sure the column names are the same between the old data and the new,
-                or you'll need to change these variables to correspond: feature.properties.['column_name']*/
+                //You'll need to either make sure the column names are the same between the old data and the new, or you'll need to change these variables to correspond: feature.properties.['column_name']
                 
-                var arrest = feature.properties['arrest_made'];
-                var conviction = feature.properties['conviction'];
-                var victim = feature.properties['o_Victim'];
-                var date = feature.properties['Date'];
+                var type = feature.properties['TYPE'];
+                var location = feature.properties['LOCATION'];
+                var neighborhood = feature.properties['NEIGHBORHOOD'];
+                var date = feature.properties['DATE'];
+                var race = feature.properties['VICTIM_RACE'];
+                var age = feature.properties['VICTIM_AGE'];
+                var sex = feature.properties['VICTIM_SEX'];
                     
-                layer.bindPopup("<strong>Victim:</strong> " + victim + "<br><strong>Date:</strong> " + date + "<br><strong>Arrest made?</strong><br>" + arrest + "<br><strong>Conviction?</strong><br>" + conviction);
+                layer.bindPopup("<strong>Date</strong> " + date + "<br><strong>Location:</strong> " + location + "<br><strong>Neighborhood:</strong><br>" + neighborhood + "<br><strong>Type:</strong><br>" + type);
               },
               
               // Here's where we employ our marker color logic
               pointToLayer: function (feature, latlng) {
-                var color = feature.properties['map_color'];
-                if(color == "YES"){
-                  return L.circleMarker(latlng, geojsonMarkerSolved);
-                }else{
+                var color = feature.properties['TYPE'];
+                if(color == "Homicide"){
+                  return L.circleMarker(latlng, geojsonMarkerHomicide);
+                }else if(color == "Non-fatal Shooting"){
                   return L.circleMarker(latlng, geojsonMarkerUnsolved);
+                }else{
+                  return L.circleMarker(latlng, geojsonNoinjury);
                 }
 		          }
             });
         
             murders.addTo(map);
-          });
+          });*/
           
-          /* JS COMMENTS: Comment out lines 91 - 118 above and uncomment the code block below to see how we can just as easily
-            use our js data file.
+          /* JS COMMENTS: Comment out lines 91 - 118 above and uncomment the code block below to see how we can just as easily use our js data file.*/
             
             var murders = L.geoJson(pgh_murders, {
-            onEachFeature: function (feature, layer) {
-              var arrest = feature.properties['arrest_made'];
-              var conviction = feature.properties['conviction'];
-                  
-              layer.bindPopup("<strong>Victim:</strong> " + feature.properties.o_Victim + "<br><strong>Date:</strong> " + feature.properties.Date + "<br><strong>Arrest made?</strong><br>" + arrest + "<br><strong>Conviction?</strong><br>" + conviction);
-            },
-            pointToLayer: function (feature, latlng) {
-              var color = feature.properties.map_color;
-              if(color == "YES"){
-                return L.circleMarker(latlng, geojsonMarkerSolved);
-              }else{
-                return L.circleMarker(latlng, geojsonMarkerUnsolved);
+              onEachFeature: function (feature, layer) {
+                var type = feature.properties['TYPE'];
+                var location = feature.properties['LOCATION'];
+                var neighborhood = feature.properties['NEIGHBORHOOD'];
+                var date = feature.properties['DATE'];
+                var race = feature.properties['VICTIM_RACE'];
+                var age = feature.properties['VICTIM_AGE'];
+                var sex = feature.properties['VICTIM_SEX'];
+                    
+                layer.bindPopup("<strong>Date</strong> " + date + "<br><strong>Location:</strong> " + location + "<br><strong>Neighborhood:</strong><br>" + neighborhood + "<br><strong>Type:</strong><br>" + type);
+                },
+                
+                // Here's where we employ our marker color logic
+              pointToLayer: function (feature, latlng) {
+                //return L.circleMarker(latlng, geojsonMarkerHomicide);
+                var color = feature.properties['TYPE'];
+                if(color == "Homicide"){
+                  return L.circleMarker(latlng, geojsonMarkerHomicide);
+                }else if(color == "Non-fatal Shooting"){
+                  return L.circleMarker(latlng, geojsonMarkerNonfatal);
+                }else{
+                  return L.circleMarker(latlng, geojsonMarkerNoinjury);
+                }
               }
-	          }
           });
           
-          murders.addTo(map);*/       
+          murders.addTo(map);       
           
           
         });
