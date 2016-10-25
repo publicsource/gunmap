@@ -19,7 +19,8 @@
           attaching the data to a variable pgh_murders. Since we're referencing our js file below, this murder.html file
           can now use that pgh_murders variable.
         -->
-        <script src="./geojson/20161019_complete_gunmapdata.js"></script>
+        <script src="./geojson/20161025_complete_gunmapdata.js"></script>
+        <!--<script src="./geojson/test.js"></script>-->
     </head>
     
     <body>
@@ -133,20 +134,21 @@
           /* JS COMMENTS: Comment out lines 91 - 118 above and uncomment the code block below to see how we can just as easily use our js data file.*/
             
             var murders = L.geoJson(pgh_murders, {
-            onEachFeature: function (feature, layer) {
-              var type = feature.properties['TYPE'];
-              var location = feature.properties['LOCATION'];
-              var neighborhood = feature.properties['NEIGHBORHOOD'];
-              var date = feature.properties['DATE'];
-              var race = feature.properties['VICTIM_RACE'];
-              var age = feature.properties['VICTIM_AGE'];
-              var sex = feature.properties['VICTIM_SEX'];
-                  
-              layer.bindPopup("<strong>Date</strong> " + date + "<br><strong>Location:</strong> " + location + "<br><strong>Neighborhood:</strong><br>" + neighborhood + "<br><strong>Type:</strong><br>" + type);
-              },
-              
-              // Here's where we employ our marker color logic
-              /*pointToLayer: function (feature, latlng) {
+              onEachFeature: function (feature, layer) {
+                var type = feature.properties['TYPE'];
+                var location = feature.properties['LOCATION'];
+                var neighborhood = feature.properties['NEIGHBORHOOD'];
+                var date = feature.properties['DATE'];
+                var race = feature.properties['VICTIM_RACE'];
+                var age = feature.properties['VICTIM_AGE'];
+                var sex = feature.properties['VICTIM_SEX'];
+                    
+                layer.bindPopup("<strong>Date</strong> " + date + "<br><strong>Location:</strong> " + location + "<br><strong>Neighborhood:</strong><br>" + neighborhood + "<br><strong>Type:</strong><br>" + type);
+                },
+                
+                // Here's where we employ our marker color logic
+              pointToLayer: function (feature, latlng) {
+                //return L.circleMarker(latlng, geojsonMarkerHomicide);
                 var color = feature.properties['TYPE'];
                 if(color == "Homicide"){
                   return L.circleMarker(latlng, geojsonMarkerHomicide);
@@ -155,7 +157,7 @@
                 }else{
                   return L.circleMarker(latlng, geojsonMarkerNoinjury);
                 }
-              }*/
+              }
           });
           
           murders.addTo(map);       
