@@ -97,12 +97,11 @@
           NOTE: if you're trying to run this locally, you're going to get error messages about Cross Origin Requests
           this is normal. Checkout the JS COMMENTS below to see a different way of doing it.*/
           
-          $.getJSON($('link[rel="pgh-murders"]').attr("href"), function(data) {
+          /*$.getJSON($('link[rel="pgh-murders"]').attr("href"), function(data) {
             var murders = L.geoJson(data, {
               onEachFeature: function (feature, layer) {
                 
-                /* You'll need to either make sure the column names are the same between the old data and the new,
-                or you'll need to change these variables to correspond: feature.properties.['column_name']*/
+                //You'll need to either make sure the column names are the same between the old data and the new, or you'll need to change these variables to correspond: feature.properties.['column_name']
                 
                 var type = feature.properties['TYPE'];
                 var location = feature.properties['LOCATION'];
@@ -129,29 +128,37 @@
             });
         
             murders.addTo(map);
-          });
+          });*/
           
-          /* JS COMMENTS: Comment out lines 91 - 118 above and uncomment the code block below to see how we can just as easily
-            use our js data file.
+          /* JS COMMENTS: Comment out lines 91 - 118 above and uncomment the code block below to see how we can just as easily use our js data file.*/
             
             var murders = L.geoJson(pgh_murders, {
             onEachFeature: function (feature, layer) {
-              var arrest = feature.properties['arrest_made'];
-              var conviction = feature.properties['conviction'];
+              var type = feature.properties['TYPE'];
+              var location = feature.properties['LOCATION'];
+              var neighborhood = feature.properties['NEIGHBORHOOD'];
+              var date = feature.properties['DATE'];
+              var race = feature.properties['VICTIM_RACE'];
+              var age = feature.properties['VICTIM_AGE'];
+              var sex = feature.properties['VICTIM_SEX'];
                   
-              layer.bindPopup("<strong>Victim:</strong> " + feature.properties.o_Victim + "<br><strong>Date:</strong> " + feature.properties.Date + "<br><strong>Arrest made?</strong><br>" + arrest + "<br><strong>Conviction?</strong><br>" + conviction);
-            },
-            pointToLayer: function (feature, latlng) {
-              var color = feature.properties.map_color;
-              if(color == "YES"){
-                return L.circleMarker(latlng, geojsonMarkerSolved);
-              }else{
-                return L.circleMarker(latlng, geojsonMarkerUnsolved);
-              }
-	          }
+              layer.bindPopup("<strong>Date</strong> " + date + "<br><strong>Location:</strong> " + location + "<br><strong>Neighborhood:</strong><br>" + neighborhood + "<br><strong>Type:</strong><br>" + type);
+              },
+              
+              // Here's where we employ our marker color logic
+              /*pointToLayer: function (feature, latlng) {
+                var color = feature.properties['TYPE'];
+                if(color == "Homicide"){
+                  return L.circleMarker(latlng, geojsonMarkerHomicide);
+                }else if(color == "Non-fatal Shooting"){
+                  return L.circleMarker(latlng, geojsonMarkerNonfatal);
+                }else{
+                  return L.circleMarker(latlng, geojsonMarkerNoinjury);
+                }
+              }*/
           });
           
-          murders.addTo(map);*/       
+          murders.addTo(map);       
           
           
         });
