@@ -11,15 +11,18 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
         <script src="js/parse-address.min.js"></script>
         <script src="js/leaflet-knn.min.js"></script>
+        <link rel="stylesheet" href="dist/MarkerCluster.css" />
+        <link rel="stylesheet" href="dist/MarkerCluster.Default.css" />
+        <script src="js/leaflet.markercluster-src.js"></script>
         
         <!-- Here's the data file. This is what you're gonna wanna replace when you get the new data ready.-->
-        <link rel="pgh-murders" type="application/geojson" href="./geojson/20161019_complete_gunmapdata.geojson">
+        <link rel="pgh-murders" type="application/geojson" href="geojson/20161019_complete_gunmapdata.geojson">
         
         <!-- Here's that same data, but we're brining it in as a js file. If you look in this file, you'll see we're
           attaching the data to a variable pgh_murders. Since we're referencing our js file below, this murder.html file
           can now use that pgh_murders variable.
         -->
-        <script src="./geojson/20161025_complete_gunmapdata.js"></script>
+        <script src="geojson/20161025_complete_gunmapdata.js"></script>
         <!--<script src="./geojson/test.js"></script>-->
     </head>
     
@@ -161,6 +164,24 @@
                   return L.circleMarker(latlng, geojsonMarkerNoinjury);
                 }
               }
+
+          
+          /* CLUSTERING JS COMMENTS: Added clustering code below. Reference code here: http://bit.ly/1nwX9rL.*/
+
+            var markers = L.markerClusterGroup();
+    
+              for (var i = 0; i < pgh_murders.length; i++) {
+                var a = pgh_murders[i];
+                var title = a[2];
+                var marker = L.marker(new L.LatLng(a[0], a[1]), { title: title });
+                marker.bindPopup(title);
+                markers.addLayer(marker);
+    }
+
+            map.addLayer(markers);
+
+        /* CLUSTERING JS COMMENTS: End of added clustering code.*/
+
           });
           
           murders.addTo(map);
