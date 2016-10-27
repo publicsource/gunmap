@@ -1,4 +1,4 @@
-var pgh_murders = {
+var pgh_shootings = {
     "type": "FeatureCollection", 
     "bbox": [
         -80.82135773, 
