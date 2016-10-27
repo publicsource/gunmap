@@ -11,12 +11,9 @@
         <script src="js/parse-address.min.js"></script>
         <script src="js/leaflet-knn.min.js"></script>
         
-        <!-- Here's the data file. This is what you're gonna wanna replace when you get the new data ready.-->
-        <link rel="pgh-murders" type="application/geojson" href="./geojson/20161019_complete_gunmapdata.geojson">
-        
         <!-- Here's that same data, but we're brining it in as a js file. If you look in this file, you'll see we're
-          attaching the data to a variable pgh_murders. Since we're referencing our js file below, this murder.html file
-          can now use that pgh_murders variable.
+          attaching the data to a variable pgh_shootings. Since we're referencing our js file below, this murder.html file
+          can now use that pgh_shootings variable.
         -->
         <script src="./geojson/20161025_complete_gunmapdata.js"></script>
         <!--<script src="./geojson/test.js"></script>-->
@@ -65,7 +62,7 @@
           }).addTo(map);
           
           // Looks like we've already solved issue #12, color-coding markers
-          // We're creating marker styles for solved murders ...
+          // We're creating marker styles for solved shootings ...
           var geojsonMarkerHomicide = {
     		    radius: 8,
     		    fillColor: "#ec1238",
@@ -75,9 +72,9 @@
     		    fillOpacity: 0.8
     			};
     			
-    			// ... and unsolved murders.
+    			// ... and unsolved shootings.
     			// We can create a variable for each marker type. The logic is contained in
-    			// murders.pointToLayer (lines 107-115ish)
+    			// shootings.pointToLayer (lines 107-115ish)
     			var geojsonMarkerNonfatal = {
     			    radius: 8,
     			    fillColor: "#63c1d6",
@@ -96,47 +93,10 @@
               fillOpacity: 0.8
           };
     			
-    			/* That link[rel="pgh-murders"] variable is our geojson murders data referenced above via:
-          <link rel="pgh-murders" type="application/geojson" href="./geojson/20160113_1027-pgh-murders.geojson">
-          NOTE: if you're trying to run this locally, you're going to get error messages about Cross Origin Requests
-          this is normal. Checkout the JS COMMENTS below to see a different way of doing it.*/
-          
-          /*$.getJSON($('link[rel="pgh-murders"]').attr("href"), function(data) {
-            var murders = L.geoJson(data, {
-              onEachFeature: function (feature, layer) {
-                
-                //You'll need to either make sure the column names are the same between the old data and the new, or you'll need to change these variables to correspond: feature.properties.['column_name']
-                
-                var type = feature.properties['TYPE'];
-                var location = feature.properties['LOCATION'];
-                var neighborhood = feature.properties['NEIGHBORHOOD'];
-                var date = feature.properties['DATE'];
-                var race = feature.properties['VICTIM_RACE'];
-                var age = feature.properties['VICTIM_AGE'];
-                var sex = feature.properties['VICTIM_SEX'];
-                    
-                layer.bindPopup("<strong>Date</strong> " + date + "<br><strong>Location:</strong> " + location + "<br><strong>Neighborhood:</strong><br>" + neighborhood + "<br><strong>Type:</strong><br>" + type);
-              },
-              
-              // Here's where we employ our marker color logic
-              pointToLayer: function (feature, latlng) {
-                var color = feature.properties['TYPE'];
-                if(color == "Homicide"){
-                  return L.circleMarker(latlng, geojsonMarkerHomicide);
-                }else if(color == "Non-fatal Shooting"){
-                  return L.circleMarker(latlng, geojsonMarkerUnsolved);
-                }else{
-                  return L.circleMarker(latlng, geojsonNoinjury);
-                }
-		          }
-            });
-        
-            murders.addTo(map);
-          });*/
-          
+            
           /* JS COMMENTS: Comment out lines 91 - 118 above and uncomment the code block below to see how we can just as easily use our js data file.*/
             
-            var murders = L.geoJson(pgh_murders, {
+            var shootings = L.geoJson(pgh_shootings, {
               onEachFeature: function (feature, layer) {
                 var type = feature.properties['TYPE'];
                 var location = feature.properties['LOCATION'];
@@ -163,7 +123,8 @@
               }
           });
           
-          murders.addTo(map);
+          shootings.addTo(map);
+
           var userMarker = '';
           var userRadius = '';
           
@@ -199,7 +160,7 @@
                     console.log(userMarker);
                     map.setView(userLatLng, 14);
                     
-                    var nearest = leafletKnn(murders).nearest(L.latLng(userLat, userLon), 1000,1609.34);
+                    var nearest = leafletKnn(shootings).nearest(L.latLng(userLat, userLon), 1000,1609.34);
                     var nearestLayer = nearest[0]['layer'];
                     var numIncidents = nearest.length;
                     
@@ -220,7 +181,7 @@
                     userRadius = L.circle(userLatLng, 1609.34, {
                        color: '#418cff ', stroke: true, weight:1, fill: true, fillColor: '#cccccc ', fillOpacity: 0.35
                    });
-                    userRadius.addTo(map);
+                    userRadius.addTo(map).bringToBack();
                     
                     var nearestLayerLatLng = nearestLayer.getLatLng();
                     var nearestLayerType = nearestLayer.feature.properties.TYPE;
