@@ -8,7 +8,6 @@
         
         <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
         <script src="http://cdn.leafletjs.com/leaflet-0.7.5/leaflet.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
         <script src="js/parse-address.min.js"></script>
         <script src="js/leaflet-knn.min.js"></script>
         
@@ -27,22 +26,23 @@
       
       <div class="map-top container">
         
-        <h1>Firearm incidents in Pittsburgh</h1>
-        <p class="lead">PublicSource plotted every murder in the city of Pittsburgh from 2010 through 2015. Using arrest data recently made available by the Bureau of Police, we have illustrated the gulf in murders and arrests. Using disposition data from the Allegheny County District Court, we have tracked each case to verdict and illustrated when those prosecutions fail.</p>
+        <h1 class="MalloryBold">How many gun crimes have there been in your neighborhood?</h1>
+        <p class= "MalloryLight">Every shooting in Pittsburgh from April 2010 to August 2016 (that we know about). </p>
         
   			<div class="row">
-  				<div class="col-sm-4">
-  					<img class="img-responsive" src="http://54.173.122.255/murder-map/murder-map-key-horizontal.jpg" alt="map key" />
+  				<div class="col-sm-7">
+  					<img class="img-responsive" src="./images/gunmap-key-horizontal-01.png" alt="map key" />
   				</div>
   			</div>
         <div id="address-input">
           <input type="text" placeholder='Type your address' id='addressInput'><br>
+          <p class="MalloryLightSmall">(enter street address, city, state, zip)</p>
           <input id="addressSubmit" type="submit" value="Submit">
         </div>
         <div class="row" id="map"></div>
         
         <div class="row">
-          <p><em>Source: A PublicSource analysis of data from the Pittsburgh Bureau of Police.<br>Map by PublicSource's Natasha Khan and Ohio Valley Resource's Alexandra Kanik</em></p>
+          <p class="MalloryLightSmall"><em>Source: A PublicSource analysis of data from the Pittsburgh Bureau of Police.<br><strong>Map by PublicSource's Natasha Khan and Ohio Valley Resource's Alexandra Kanik.</strong></em></p>
         </div>
         
       </div>
@@ -53,11 +53,11 @@
         
         $(document).ready(function(){
           
-          var map = L.map('map', {scrollWheelZoom:false}).setView([40.4472386, -79.9814464], 12);
+          var map = L.map('map', {scrollWheelZoom:false}).setView([40.4321111, -79.97622894], 12);
           
-          $('#data-table').append('<tr><td>Click a county above to see jail death data</td><td></tr>');
+          $('#data-table').append('<tr><td> </td><td></tr>');
           
-          L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+          L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/light-v9/tiles/256/{z}/{x}/{y}?access_token={accessToken}', {
               attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a target="_blank" href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery � <a href="http://mapbox.com">Mapbox</a>',
               maxZoom: 18,
               id: 'akanik.nck27c9l',
@@ -68,10 +68,10 @@
           // We're creating marker styles for solved murders ...
           var geojsonMarkerHomicide = {
     		    radius: 8,
-    		    fillColor: "#fd552b",
+    		    fillColor: "#ec1238",
     		    color: "#000",
     		    weight: 1,
-    		    opacity: 1,
+    		    opacity: .7,
     		    fillOpacity: 0.8
     			};
     			
@@ -80,7 +80,7 @@
     			// murders.pointToLayer (lines 107-115ish)
     			var geojsonMarkerNonfatal = {
     			    radius: 8,
-    			    fillColor: "#e4b33f",
+    			    fillColor: "#63c1d6",
     			    color: "#000",
     			    weight: 1,
     			    opacity: 1,
@@ -89,7 +89,7 @@
 
           var geojsonMarkerNoinjury = {
               radius: 8,
-              fillColor: "#97b5bf",
+              fillColor: "#dd8736",
               color: "#000",
               weight: 1,
               opacity: 1,
@@ -217,7 +217,9 @@
                       
                     });
                                         
-                    userRadius = L.circle(userLatLng, 1609.34);
+                    userRadius = L.circle(userLatLng, 1609.34, {
+                       color: '#418cff ', stroke: true, weight:1, fill: true, fillColor: '#cccccc ', fillOpacity: 0.35
+                   });
                     userRadius.addTo(map);
                     
                     var nearestLayerLatLng = nearestLayer.getLatLng();
@@ -227,7 +229,7 @@
                     var distanceBetween = nearestLayerLatLng.distanceTo(userLatLng);
                     var distanceInMiles = distanceBetween / 1609.34;
                     
-                    var popupContent = '<p>From April 2010 to August 2016, there have been <strong>' + numIncidents + '</strong> shootings within 1-mile of this point, <strong>' + homicideList.length + '</strong> fatal, <strong>' + nonFatalList.length + '</strong> non-fatal (someone was injured) and <strong>' + assultList.length + '</strong> aggravated assaults with a weapon (a gun was shot, but no one was injured.) The shooting closest to this point was <strong>' + distanceInMiles.toFixed(2) + '</strong> miles away.</p>';
+                    var popupContent = '<h4 class="MalloryLight">There have been <strong>' + numIncidents + '</strong> shootings within 1 mile of this address.</h4> <strong>' + homicideList.length + '</strong> homicides, <strong>' + nonFatalList.length + '</strong> non-fatal shootings (this means someone was injured) and <strong>' + assultList.length + '</strong> aggravated assaults with a weapon (a gun was shot, but no one was injured). The shooting closest to this address was <strong>' + distanceInMiles.toFixed(2) + '</strong> miles away.</p>';
                     
                     
     

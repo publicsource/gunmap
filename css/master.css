@@ -1,5 +1,5 @@
 #map { 
-	height: 500px; 
+	height: 550px; 
 	}
 	
 input[type=text] {
@@ -16,12 +16,72 @@ input[type=text]:focus {
 }
 
 input[type=button], input[type=submit], input[type=reset] {
-    background-color: #42b1ed;
+    background-color: #000000;
     border: none;
     color: white;
-    padding: 16px 32px;
+    font-family: Mallory-Medium;
+    padding: 15px 30px 10px;
     text-decoration: none;
     margin: 4px 2px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 20px;
 }
+
+@font-face{
+font-family: "Mallory-Bold";
+src: url("fonts/Mallory-Bold.otf");
+}
+
+@font-face{
+font-family: "Mallory-Ultra";
+src: url("fonts/Mallory-Ultra.otf");
+}
+
+@font-face{
+font-family: "Mallory-Light";
+src: url("fonts/Mallory-Light.otf");
+}
+
+@font-face{
+font-family: "Mallory-Medium";
+src: url("fonts/Mallory-Light.otf");
+}
+.MalloryBold{
+  font-family: "Mallory-Bold";
+  font-weight: normal;
+  font-size: 3em;
+  line-height: 1.2em;
+  font
+  }
+
+.MalloryMedium{
+  font-family: "Mallory-Medium";
+  font-weight: normal;
+  font-size: 3em;
+  line-height: 1.2em;
+  font
+  }
+
+
+.MalloryUltra{
+  font-family: "Mallory-Ultra";
+  font-weight: normal;
+  line-height: 1.2em;
+  font
+  }
+
+  .MalloryLight{
+  font-family: "Mallory-Light";
+  font-weight: normal;
+  font-size: 1.5em;
+  line-height: 1.2em;
+  font
+  }
+
+    .MalloryLightSmall{
+  font-family: "Mallory-Light";
+  font-weight: normal;
+  font-size: 1em;
+  line-height: 1.2em;
+  font
+  }
