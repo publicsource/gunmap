@@ -149,7 +149,7 @@
                 layer.bindPopup("<strong>Date</strong> " + date + "<br><strong>Location:</strong> " + location + "<br><strong>Neighborhood:</strong><br>" + neighborhood + "<br><strong>Type:</strong><br>" + type);
                 },
                 
-                // Here's where we employ our marker color logic
+              // Here's where we employ our marker color logic
               pointToLayer: function (feature, latlng) {
                 //return L.circleMarker(latlng, geojsonMarkerHomicide);
                 var color = feature.properties['TYPE'];
@@ -164,9 +164,11 @@
           });
           
           murders.addTo(map);
+          var userMarker = '';
+          var userRadius = '';
           
           function getAddress(addressString){
-          
+            
             function findNearest(geocodeURL){
               $.ajax({
                 type : "Get",
@@ -174,16 +176,49 @@
                 dataType :"jsonp",
                 jsonpCallback: "myCallback",
                 success : function(data){
+                
+                    if(userMarker != ''){
+                      map.removeLayer(userMarker);
+                      map.removeLayer(userRadius);
+                    }else{
+                      //console.log(userMarker);
+                      //console.log('shhhhhhhhiiiiiiiiiiiii')
+                      //console.log(userMarker.val());
+                    }
                     var userAddress = data['resourceSets'][0]['resources'][0]['point']['coordinates'];
                     var userLat = userAddress[0];
                     var userLon = userAddress[1];
                     var userLatLng = L.latLng(userLat,userLon);
+                    var homicideList = [];
+                    var nonFatalList = [];
+                    var assultList = [];
+                    var noTypeList = [];
                   
-                    var userMarker = L.marker(userAddress).addTo(map);
+                    userMarker = L.marker(userAddress);
+                    userMarker.addTo(map);
+                    console.log(userMarker);
                     map.setView(userLatLng, 14);
                     
-                    var nearest = leafletKnn(murders).nearest(L.latLng(userLat, userLon), 1);
+                    var nearest = leafletKnn(murders).nearest(L.latLng(userLat, userLon), 1000,1609.34);
                     var nearestLayer = nearest[0]['layer'];
+                    var numIncidents = nearest.length;
+                    
+                    $.each(nearest, function(index, value){
+                      var shootingType = value['layer']['feature']['properties']['TYPE'];
+                      if(shootingType == 'Homicide'){
+                        homicideList.push(shootingType);
+                      }else if(shootingType == 'Non-fatal Shooting'){
+                        nonFatalList.push(shootingType)
+                      }else if(shootingType == 'Aggravated Assaults with a Firearm'){
+                        assultList.push(shootingType)
+                      }else{
+                        noTypeList.push(shootingType)
+                      }
+                      
+                    });
+                                        
+                    userRadius = L.circle(userLatLng, 1609.34);
+                    userRadius.addTo(map);
                     
                     var nearestLayerLatLng = nearestLayer.getLatLng();
                     var nearestLayerType = nearestLayer.feature.properties.TYPE;
@@ -192,7 +227,9 @@
                     var distanceBetween = nearestLayerLatLng.distanceTo(userLatLng);
                     var distanceInMiles = distanceBetween / 1609.34;
                     
-                    var popupContent = '<p><strong>' + nearestLayerAddress + '</strong> is address of the nearest incident to <strong>' + addressString + '</strong>. This incident was a <strong>' + nearestLayerType + '</strong> and was <strong>' + distanceInMiles.toFixed(2) + ' miles away.</p>';
+                    var popupContent = '<p>From April 2010 to August 2016, there have been <strong>' + numIncidents + '</strong> shootings within 1-mile of this point, <strong>' + homicideList.length + '</strong> fatal, <strong>' + nonFatalList.length + '</strong> non-fatal (someone was injured) and <strong>' + assultList.length + '</strong> aggravated assaults with a weapon (a gun was shot, but no one was injured.) The shooting closest to this point was <strong>' + distanceInMiles.toFixed(2) + '</strong> miles away.</p>';
+                    
+                    
     
                     nearestLayer.bindPopup(popupContent).openPopup();
                     
@@ -235,6 +272,7 @@
           
           $('#addressSubmit').on('click',function(){
             if($('#addressInput').val()){
+              var userMarker;
               getAddress($('#addressInput').val());
             }else{
               alert('try again allie');
