@@ -15,7 +15,7 @@
           attaching the data to a variable pgh_shootings. Since we're referencing our js file below, this murder.html file
           can now use that pgh_shootings variable.
         -->
-        <script src="./geojson/20161025_complete_gunmapdata.js"></script>
+        <script src="./geojson/20161027_completedata_plusunique_pghshootings.js"></script>
         <!--<script src="./geojson/test.js"></script>-->
     </head>
     
@@ -105,6 +105,9 @@
                 var race = feature.properties['VICTIM_RACE'];
                 var age = feature.properties['VICTIM_AGE'];
                 var sex = feature.properties['VICTIM_SEX'];
+                var uniqueID = feature.properties['UNIQUE_ID'];
+
+                console.log(uniqueID);
                     
                 layer.bindPopup("<strong>Date</strong> " + date + "<br><strong>Location:</strong> " + location + "<br><strong>Neighborhood:</strong><br>" + neighborhood + "<br><strong>Type:</strong><br>" + type);
                 },
@@ -166,14 +169,15 @@
                     
                     $.each(nearest, function(index, value){
                       var shootingType = value['layer']['feature']['properties']['TYPE'];
+                      var shootingUID = value['layer']['feature']['properties']['UNIQUE_ID'];
                       if(shootingType == 'Homicide'){
-                        homicideList.push(shootingType);
+                        homicideList.push(shootingUID);
                       }else if(shootingType == 'Non-fatal Shooting'){
-                        nonFatalList.push(shootingType)
+                        nonFatalList.push(shootingUID)
                       }else if(shootingType == 'Aggravated Assaults with a Firearm'){
-                        assultList.push(shootingType)
+                        assultList.push(shootingUID)
                       }else{
-                        noTypeList.push(shootingType)
+                        noTypeList.push(shootingUID)
                       }
                       
                     });
@@ -190,7 +194,12 @@
                     var distanceBetween = nearestLayerLatLng.distanceTo(userLatLng);
                     var distanceInMiles = distanceBetween / 1609.34;
                     
-                    var popupContent = '<h4 class="MalloryLight">There have been <strong>' + numIncidents + '</strong> shootings within 1 mile of this address.</h4> <strong>' + homicideList.length + '</strong> homicides, <strong>' + nonFatalList.length + '</strong> non-fatal shootings (this means someone was injured) and <strong>' + assultList.length + '</strong> aggravated assaults with a weapon (a gun was shot, but no one was injured). The shooting closest to this address was <strong>' + distanceInMiles.toFixed(2) + '</strong> miles away.</p>';
+                    var popupContent = '<h4 class="MalloryLight">There have been <strong>' + numIncidents + '</strong> shootings within 1 mile of this address.</h4> <strong>' + homicideList.length + '</strong> homicides, <strong>' + nonFatalList.length + '</strong> non-fatal shootings (this means someone was injured) and  <strong>' + assultList.length + '</strong> aggravated assaults with a weapon (a gun was shot, but no one was injured). The shooting closest to this address was <strong>' + distanceInMiles.toFixed(2) + '</strong> miles away.</p>';
+
+                    console.log('homicideList: ', homicideList);
+                    console.log('nonFatalList: ', nonFatalList);
+                    console.log('assultList: ', assultList);
+
                     
                     
     
