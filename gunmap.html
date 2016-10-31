@@ -107,7 +107,7 @@
                 var sex = feature.properties['VICTIM_SEX'];
                 var uniqueID = feature.properties['UNIQUE_ID'];
 
-                console.log(uniqueID);
+                console.log(neighborhood);
                     
                 layer.bindPopup("<strong>Date</strong> " + date + "<br><strong>Location:</strong> " + location + "<br><strong>Neighborhood:</strong><br>" + neighborhood + "<br><strong>Type:</strong><br>" + type);
                 },
@@ -169,15 +169,16 @@
                     
                     $.each(nearest, function(index, value){
                       var shootingType = value['layer']['feature']['properties']['TYPE'];
+                      var neighborhoodcheck = value['layer']['feature']['properties']['NEIGHBORHOOD'];
                       var shootingUID = value['layer']['feature']['properties']['UNIQUE_ID'];
                       if(shootingType == 'Homicide'){
-                        homicideList.push(shootingUID);
+                        homicideList.push(shootingUID, neighborhoodcheck);
                       }else if(shootingType == 'Non-fatal Shooting'){
-                        nonFatalList.push(shootingUID)
+                        nonFatalList.push(shootingUID, neighborhoodcheck)
                       }else if(shootingType == 'Aggravated Assaults with a Firearm'){
-                        assultList.push(shootingUID)
+                        assultList.push(shootingUID, neighborhoodcheck)
                       }else{
-                        noTypeList.push(shootingUID)
+                        noTypeList.push(shootingUID, neighborhoodcheck)
                       }
                       
                     });
