@@ -1549,8 +1549,8 @@ var pgh_shootings = {
             "geometry": {
                 "type": "Point", 
                 "coordinates": [
-                    -79.9610395, 
-                    40.48738249
+                    -79.977679, 
+                    40.446475
                 ]
             }, 
             "properties": {
@@ -2448,8 +2448,8 @@ var pgh_shootings = {
             "geometry": {
                 "type": "Point", 
                 "coordinates": [
-                    -79.84396215, 
-                    40.33066883
+                    -79.972991, 
+                    40.461128
                 ]
             }, 
             "properties": {
@@ -5435,8 +5435,8 @@ var pgh_shootings = {
             "geometry": {
                 "type": "Point", 
                 "coordinates": [
-                    -74.513512, 
-                    44.830329
+                    -79.886401, 
+                    40.457064
                 ]
             }, 
             "properties": {
@@ -9576,36 +9576,7 @@ var pgh_shootings = {
                 "VICTIM_AGE": "", 
                 "ACTOR_CT.": ""
             }
-        }, 
-        {
-            "type": "Feature", 
-            "geometry": {
-                "type": "Point", 
-                "coordinates": [
-                    -80.82135773, 
-                    37.75056839
-                ]
-            }, 
-            "properties": {
-                "VICTIM_ID": "", 
-                "TYPE": "Non-fatal Shooting", 
-                "CCR": "16096892", 
-                "DATE": "5/26/16", 
-                "TIME": "", 
-                "HOUR": "18", 
-                "LOCATION": "Ramp From Reedsdale St to Rt.65/Ridge Av &", 
-                "CENSUS_TRACT": "", 
-                "NEIGHBORHOOD": "Chateau", 
-                "ZONE": "1", 
-                "WEAPON": "", 
-                "weapon_type": "Firearm", 
-                "MOTIVE": "", 
-                "VICTIM_RACE": "", 
-                "VICTIM_SEX": "", 
-                "VICTIM_AGE": "", 
-                "ACTOR_CT.": ""
-            }
-        }, 
+        },  
         {
             "type": "Feature", 
             "geometry": {
@@ -13033,8 +13004,8 @@ var pgh_shootings = {
             "geometry": {
                 "type": "Point", 
                 "coordinates": [
-                    -79.87897463, 
-                    40.44181712
+                    -80.020792, 
+                    40.454795
                 ]
             }, 
             "properties": {
@@ -14541,8 +14512,8 @@ var pgh_shootings = {
             "geometry": {
                 "type": "Point", 
                 "coordinates": [
-                    -80.05960532, 
-                    40.49751721
+                    -79.906840, 
+                    40.462087
                 ]
             }, 
             "properties": {
@@ -16803,8 +16774,8 @@ var pgh_shootings = {
             "geometry": {
                 "type": "Point", 
                 "coordinates": [
-                    -79.86064374, 
-                    40.4266499
+                    -79.975235, 
+                    40.442508
                 ]
             }, 
             "properties": {
@@ -18253,8 +18224,8 @@ var pgh_shootings = {
             "geometry": {
                 "type": "Point", 
                 "coordinates": [
-                    -79.85954285, 
-                    40.42691422
+                    -79.975794, 
+                    40.442618
                 ]
             }, 
             "properties": {
@@ -18485,8 +18456,8 @@ var pgh_shootings = {
             "geometry": {
                 "type": "Point", 
                 "coordinates": [
-                    -79.8300679, 
-                    40.45293689
+                    -80.005318, 
+                    40.417176
                 ]
             }, 
             "properties": {
@@ -20109,8 +20080,8 @@ var pgh_shootings = {
             "geometry": {
                 "type": "Point", 
                 "coordinates": [
-                    -80.04415894, 
-                    40.55284119
+                    -79.909063, 
+                    40.461283
                 ]
             }, 
             "properties": {
@@ -21298,8 +21269,8 @@ var pgh_shootings = {
             "geometry": {
                 "type": "Point", 
                 "coordinates": [
-                    -79.86093745, 
-                    40.42684972
+                    -79.976287, 
+                    40.443340
                 ]
             }, 
             "properties": {
@@ -23299,8 +23270,8 @@ var pgh_shootings = {
             "geometry": {
                 "type": "Point", 
                 "coordinates": [
-                    -79.86194931, 
-                    40.42825453
+                    -79.977952, 
+                    40.441739
                 ]
             }, 
             "properties": {
@@ -23589,8 +23560,8 @@ var pgh_shootings = {
             "geometry": {
                 "type": "Point", 
                 "coordinates": [
-                    -79.91785794, 
-                    40.4945118
+                    -79.985020, 
+                    40.450843
                 ]
             }, 
             "properties": {
@@ -26373,8 +26344,8 @@ var pgh_shootings = {
             "geometry": {
                 "type": "Point", 
                 "coordinates": [
-                    -79.86194931, 
-                    40.42825453
+                    -79.977952, 
+                    40.441739
                 ]
             }, 
             "properties": {
@@ -28345,8 +28316,8 @@ var pgh_shootings = {
             "geometry": {
                 "type": "Point", 
                 "coordinates": [
-                    -79.86195467, 
-                    40.42827398
+                    -79.977980, 
+                    40.441766
                 ]
             }, 
             "properties": {
@@ -29679,8 +29650,8 @@ var pgh_shootings = {
             "geometry": {
                 "type": "Point", 
                 "coordinates": [
-                    -79.89576325, 
-                    40.58061406
+                    -79.992892, 
+                    40.416283
                 ]
             }, 
             "properties": {
@@ -36262,8 +36233,8 @@ var pgh_shootings = {
             "geometry": {
                 "type": "Point", 
                 "coordinates": [
-                    -80.0579638, 
-                    40.49271271
+                    -79.923425, 
+                    40.461722
                 ]
             }, 
             "properties": {
@@ -44150,8 +44121,8 @@ var pgh_shootings = {
             "geometry": {
                 "type": "Point", 
                 "coordinates": [
-                    -79.79088955, 
-                    40.49304932
+                    -79.915817, 
+                    40.463031
                 ]
             }, 
             "properties": {
@@ -46151,8 +46122,8 @@ var pgh_shootings = {
             "geometry": {
                 "type": "Point", 
                 "coordinates": [
-                    -79.87743303, 
-                    40.44131353
+                    -80.021498, 
+                    40.454671
                 ]
             }, 
             "properties": {
@@ -50356,8 +50327,8 @@ var pgh_shootings = {
             "geometry": {
                 "type": "Point", 
                 "coordinates": [
-                    -79.87897463, 
-                    40.44181712
+                    -80.020792, 
+                    40.454795
                 ]
             }, 
             "properties": {
@@ -51603,8 +51574,8 @@ var pgh_shootings = {
             "geometry": {
                 "type": "Point", 
                 "coordinates": [
-                    -80.02398682, 
-                    40.52775955
+                    -80.002664, 
+                    40.441654
                 ]
             }, 
             "properties": {
@@ -53314,8 +53285,8 @@ var pgh_shootings = {
             "geometry": {
                 "type": "Point", 
                 "coordinates": [
-                    -79.96084839, 
-                    40.33857085
+                    -79.996791, 
+                    40.382687
                 ]
             }, 
             "properties": {
@@ -58766,8 +58737,8 @@ var pgh_shootings = {
             "geometry": {
                 "type": "Point", 
                 "coordinates": [
-                    -79.91785794, 
-                    40.4945118
+                    -79.985020, 
+                    40.450843
                 ]
             }, 
             "properties": {
@@ -60767,8 +60738,8 @@ var pgh_shootings = {
             "geometry": {
                 "type": "Point", 
                 "coordinates": [
-                    -79.9178009, 
-                    40.49444199
+                    -79.984920, 
+                    40.450996
                 ]
             }, 
             "properties": {
@@ -62762,36 +62733,7 @@ var pgh_shootings = {
                 "VICTIM_AGE": "", 
                 "ACTOR_CT.": ""
             }
-        }, 
-        {
-            "type": "Feature", 
-            "geometry": {
-                "type": "Point", 
-                "coordinates": [
-                    -79.866275, 
-                    40.415946
-                ]
-            }, 
-            "properties": {
-                "VICTIM_ID": "", 
-                "TYPE": "Non-fatal Shooting", 
-                "CCR": "11154392", 
-                "DATE": "8/14/11", 
-                "TIME": "", 
-                "HOUR": "2", 
-                "LOCATION": "Jefferson ST &", 
-                "CENSUS_TRACT": "", 
-                "NEIGHBORHOOD": "Central North Side", 
-                "ZONE": "1", 
-                "WEAPON": "", 
-                "weapon_type": "Firearm", 
-                "MOTIVE": "", 
-                "VICTIM_RACE": "", 
-                "VICTIM_SEX": "", 
-                "VICTIM_AGE": "", 
-                "ACTOR_CT.": ""
-            }
-        }, 
+        },  
         {
             "type": "Feature", 
             "geometry": {
@@ -69032,8 +68974,8 @@ var pgh_shootings = {
             "geometry": {
                 "type": "Point", 
                 "coordinates": [
-                    -79.9178009, 
-                    40.49444199
+                    -79.984920, 
+                    40.450996
                 ]
             }, 
             "properties": {
@@ -71961,8 +71903,8 @@ var pgh_shootings = {
             "geometry": {
                 "type": "Point", 
                 "coordinates": [
-                    -80.04393384, 
-                    40.55294506
+                    -79.910777, 
+                    40.461107
                 ]
             }, 
             "properties": {
@@ -74774,8 +74716,8 @@ var pgh_shootings = {
             "geometry": {
                 "type": "Point", 
                 "coordinates": [
-                    -79.87894714, 
-                    40.4418084
+                    -80.020873, 
+                    40.454780
                 ]
             }, 
             "properties": {
