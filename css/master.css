@@ -89,11 +89,11 @@ src: url("fonts/Mallory-Light.otf");
 @media only screen and (max-width: 768px) {
     
     #map{ 
-      height: 300px; 
+      height: 350px; 
       width:100%;
     }
     
     .leaflet-popup-content{ 
-      width:250px;
+      width:240px !important;
     }
 }
