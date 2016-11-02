@@ -85,3 +85,11 @@ src: url("fonts/Mallory-Light.otf");
   line-height: 1.2em;
   font
   }
+  
+@media only screen and (max-width: 768px) {
+    
+    #map{ 
+      height: 300px; 
+      width:100%;
+    }
+}
