@@ -92,4 +92,8 @@ src: url("fonts/Mallory-Light.otf");
       height: 300px; 
       width:100%;
     }
+    
+    .leaflet-popup-content{ 
+      width:250px;
+    }
 }
