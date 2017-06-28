@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Louisville Homicide Map</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.5/leaflet.css" />
+        <link rel="stylesheet" href="css/master.css" />
+        
+        <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+        <script src="http://cdn.leafletjs.com/leaflet-0.7.5/leaflet.js"></script>
+        <script src="js/parse-address.min.js"></script>
+        <script src="js/leaflet-knn.min.js"></script>
+        
+        <!-- Here's that same data, but we're brining it in as a js file. If you look in this file, you'll see we're
+          attaching the data to a variable pgh_shootings. Since we're referencing our js file below, this murder.html file
+          can now use that pgh_shootings variable.
+        -->
+        <script src="../data/20170627-LMPD-homicides-clean-geo.js"></script>
+    </head>
+    
+    <body>
+      
+      <div class="map-top container">
+        
+        <h1 class="MalloryBold">How many homicides have there been near you?</h1>
+        <p class= "MalloryLight">Every homicide in Louisville for the last 5 years. This map will be updated. </p>
+        
+  			<div class="row">
+  				<div class="col-sm-7">
+  					<img class="img-responsive" src="./images/gunmap-key-horizontal-01.png" alt="map key" />
+  				</div>
+  			</div>
+        <div id="address-input">
+          <input type="text" placeholder='Type your address' id='addressInput'><br>
+          <p class="MalloryLightSmall">(enter street address, city, state, zip)</p>
+          <input id="addressSubmit" type="submit" value="Submit">
+        </div>
+        <div class="row" id="map"></div>
+        
+        <div class="row">
+          <p class="MalloryLightSmall"><em>Source: Louisville Metro Police Department, Homicide data January 1, 2012 through June 6, 2017<br><strong>Map by Alexandra Kanik and Natasha Khan</strong></em></p>
+        </div>
+        
+      </div>
+      
+      <script>
+        
+        var pymChild;
+        
+        $(document).ready(function(){
+          
+          var map = L.map('map', {scrollWheelZoom:false}).setView([38.22, -85.754499], 12);
+          
+          $('#data-table').append('<tr><td> </td><td></tr>');
+          
+          L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/light-v9/tiles/256/{z}/{x}/{y}?access_token={accessToken}', {
+              attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a target="_blank" href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery � <a href="http://mapbox.com">Mapbox</a>',
+              maxZoom: 18,
+              id: 'akanik.nck27c9l',
+              accessToken: 'pk.eyJ1IjoibG91aXN2aWxsZXB1YmxpY21lZGlhIiwiYSI6ImNpczIzeGozMzAwMTAyeWxrd3lmcm9hd3AifQ.0um7N9Jp-EqbYcCc_9WZOQ'
+          }).addTo(map);
+          
+          // Looks like we've already solved issue #12, color-coding markers
+          // We're creating marker styles for solved shootings ...
+          var geojsonMarkerGSW = {
+    		    radius: 8,
+    		    fillColor: "#e41a1c",
+    		    color: "#000",
+    		    weight: 1,
+    		    opacity: .7,
+    		    fillOpacity: 0.8
+    			};
+    			
+    			// ... and unsolved shootings.
+    			// We can create a variable for each marker type. The logic is contained in
+    			// shootings.pointToLayer (lines 107-115ish)
+    			var geojsonMarkerBFT = {
+  			    radius: 8,
+  			    fillColor: "#1f78b4",
+  			    color: "#000",
+  			    weight: 1,
+  			    opacity: 1,
+  			    fillOpacity: 0.8
+    			};
+
+          var geojsonMarkerStabbing = {
+            radius: 8,
+            fillColor: "#4daf4a",
+            color: "#000",
+            weight: 1,
+            opacity: 1,
+            fillOpacity: 0.8
+          };
+          
+          var geojsonMarkerOther = {
+            radius: 8,
+            fillColor: "#ffff33",
+            color: "#000",
+            weight: 1,
+            opacity: 1,
+            fillOpacity: 0.8
+          }
+    			
+            
+          /* JS COMMENTS: Comment out lines 91 - 118 above and uncomment the code block below to see how we can just as easily use our js data file.*/
+            
+            var homicides = L.geoJson(homicide_data, {
+              onEachFeature: function (feature, layer) {
+                var cause = feature.properties['cause'];
+                var date = feature.properties['date'];
+                var year = feature.properties['year'];
+                var month = feature.properties['month'];
+                var location = feature.properties['location'];
+                var victim = feature.properties['new_victim'];
+                var gender = feature.properties['new_gender'];
+                var race = feature.properties['new_race'];
+                var age = feature.properties['new_age'];
+                var cause = feature.properties['new_cause'];
+                
+                console.log('pie');
+                    
+                layer.bindPopup("<strong>Date</strong> " + date + "<br><strong>Location:</strong> " + location + "<br><strong>Race:</strong><br>" + race + "<br><strong>Age:</strong><br>" + age + "<br><strong>Cause:</strong><br>" + cause);
+                },
+                
+              // Here's where we employ our marker color logic
+              pointToLayer: function (feature, latlng) {
+                //return L.circleMarker(latlng, geojsonMarkerHomicide);
+                var color = feature.properties['new_cause'];
+                if(color == 'Gun shot wound'){
+                  return L.circleMarker(latlng, geojsonMarkerGSW);
+                }else if(color == 'Blunt force trauma'){
+                  return L.circleMarker(latlng, geojsonMarkerBFT);
+                }else if(color == 'Stabbing'){
+                  return L.circleMarker(latlng, geojsonMarkerStabbing);
+                }else{
+                  return L.circleMarker(latlng, geojsonMarkerOther)
+                }
+              }
+            });
+            
+            
+          
+          homicides.addTo(map);
+
+          var userMarker = '';
+          var userRadius = '';
+          
+          function getAddress(addressString){
+            
+            function findNearest(geocodeURL){
+              $.ajax({
+                type : "Get",
+                url :geocodeURL,
+                dataType :"jsonp",
+                jsonpCallback: "myCallback",
+                success : function(data){
+                
+                    if(userMarker != ''){
+                      map.removeLayer(userMarker);
+                      map.removeLayer(userRadius);
+                    }else{
+                      //console.log(userMarker);
+                      //console.log('shhhhhhhhiiiiiiiiiiiii')
+                      //console.log(userMarker.val());
+                    }
+                    var userAddress = data['resourceSets'][0]['resources'][0]['point']['coordinates'];
+                    var userLat = userAddress[0];
+                    var userLon = userAddress[1];
+                    var userLatLng = L.latLng(userLat,userLon);
+                    var gswList = [];
+                    var bftList = [];
+                    var stabbingList = [];
+                    var otherList = [];
+                  
+                    userMarker = L.marker(userAddress);
+                    userMarker.addTo(map);
+                    console.log(userMarker);
+                    map.setView(userLatLng, 14);
+                    
+                    var nearest = leafletKnn(homicides).nearest(L.latLng(userLat, userLon), 1000,1609.34);
+                    var nearestLayer = nearest[0]['layer'];
+                    var numIncidents = nearest.length;
+                    
+                    $.each(nearest, function(index, value){
+                      var cod = value['layer']['feature']['properties']['new_cause'];
+                      if(cod == 'Gun shot wound'){
+                        gswList.push(cod);
+                      }else if(cod == 'Blunt force trauma'){
+                        bftList.push(cod);
+                      }else if(cod == 'Stabbing'){
+                        stabbingList.push(cod)
+                      }else{
+                        otherList.push(cod);
+                      }
+                      
+                    });
+                                        
+                    userRadius = L.circle(userLatLng, 1609.34, {
+                       color: '#418cff ', stroke: true, weight:1, fill: true, fillColor: '#cccccc ', fillOpacity: 0.35
+                   });
+                    userRadius.addTo(map).bringToBack();
+                    
+                    var nearestLayerLatLng = nearestLayer.getLatLng();
+                    var nearestLayerType = nearestLayer.feature.properties.cause;
+                    var nearestLayerAddress = nearestLayer.feature.properties.location;
+                                  
+                    var distanceBetween = nearestLayerLatLng.distanceTo(userLatLng);
+                    var distanceInMiles = distanceBetween / 1609.34;
+                    
+                    var popupContent = '<h4 class="MalloryLight">There have been <strong>' + numIncidents + '</strong> homicides within 1 mile of this address.</h4> <strong>' + gswList.length + '</strong> from gun shot wounds, <strong>' + bftList.length + '</strong> from blunt force trauma, <strong>' + stabbingList.length + '</strong> from stab wounds and <strong>' + otherList.length + '</strong> from other causes. The closest homicide to this address was <strong>' + distanceInMiles.toFixed(2) + '</strong> miles away.</p>';
+                    
+                    
+    
+                    nearestLayer.bindPopup(popupContent).openPopup();
+                    
+                },
+                error : function(httpReq,status,exception){
+                    alert(status+" "+exception);
+                }
+              });
+            }
+            
+            var parsedAddress = parseAddress.parseLocation(addressString);
+            var address = '';
+            var city = '';
+            var state = '';
+            var zip = '';
+            var geocodeURL = '';
+            
+            if(parsedAddress['number'] && parsedAddress['prefix'] && parsedAddress['street'] && parsedAddress['type']){
+              address = parsedAddress['number'] + ' ' + parsedAddress['prefix'] + ' ' + parsedAddress['street'] + ' ' + parsedAddress['type']; 
+            }else if(parsedAddress['number'] && parsedAddress['street'] && parsedAddress['type']){
+              address = parsedAddress['number'] + ' ' + parsedAddress['street'] + ' ' + parsedAddress['type']; 
+            }else if(parsedAddress['number'] && parsedAddress['street']){
+              address = parsedAddress['number'] + ' ' + parsedAddress['street'];
+            }else{
+              alert('Please enter at least a street number and street name');
+              return;
+            }
+            
+            if(parsedAddress['city'] && parsedAddress['state'] && parsedAddress['zip']){
+              city = parsedAddress['city'];
+              state = parsedAddress['state'];
+              zip = parsedAddress['zip'];
+              geocodeURL = 'http://dev.virtualearth.net/REST/v1/Locations/US/' + state + '/' + zip + '/' + city + '/' + encodeURIComponent(address) + '?o=json&jsonp=myCallback&key=AmEa01YgR2J-e2GRn_kc8-pTjfTgTtJcxQmMrF1ZRDLFx7KfCKrwECa54zvrHuEm';
+              findNearest(geocodeURL);
+            }else{
+              alert('Please enter a city, state and zip');
+              return;
+            }
+          };
+          
+          $('#addressSubmit').on('click',function(){
+            if($('#addressInput').val()){
+              var userMarker;
+              getAddress($('#addressInput').val());
+            }else{
+              alert('Please submit a full address (street address, city, state, zip)');
+            }
+          });  
+        });
+      </script>
+      
+      <script src="./js/pym.min.js"></script>
+      
+      <!-- I hate pym.js, but here's that code. I don't actually hate it... it hates me though.-->
+      <script type="text/javascript">
+        (function() {
+        	var $ = jQuery,
+        	pymChild = new pym.Child({polling:500});
+        	$(document).ready(function(){
+          	$(window).load(function(){
+          	});
+        	});
+        })();
+      </script>
+   </body>
+</html>
